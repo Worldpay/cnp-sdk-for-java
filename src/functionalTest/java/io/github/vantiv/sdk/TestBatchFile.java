@@ -15,12 +15,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import io.github.vantiv.sdk.generate.*;
+import io.github.vantiv.sdk.generate.TypeOfDigitalCurrencyEnum;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -528,12 +529,21 @@ public class TestBatchFile {
         contact.setState("MA");
         contact.setEmail("Bob@cnp.com");
 
+        //test for new elements:typeOfDigitalCurrency,conversionAffiliateId in Authorization, sale, captureGivenAuth
+        //and authenticationProtocolVersionType for enum value added 3,4,5,6,7,8,9 in FraudCheckType in Authorization
+        FraudCheckType fraudCheckType1 = new FraudCheckType();
+        fraudCheckType1.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.NINE);
+        fraudCheckType1.setCustomerIpAddress("127.0.0.1");
+
         Authorization auth = new Authorization();
         auth.setReportGroup("Planets");
         auth.setOrderId("12344");
         auth.setAmount(106L);
         auth.setOrderSource(OrderSourceType.ECOMMERCE);
         auth.setCard(card);
+        auth.setCardholderAuthentication(fraudCheckType1);
+        auth.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.SEVEN);
+        auth.setConversionAffiliateId("ABCD");
         auth.setId("id");
         LodgingInfo lodgingInfo = new LodgingInfo();
         lodgingInfo.setRoomRate(106L);
@@ -542,6 +552,8 @@ public class TestBatchFile {
         lodgingCharge.setName(LodgingExtraChargeEnum.RESTAURANT);
         lodgingInfo.getLodgingCharges().add(lodgingCharge);
         auth.setLodgingInfo(lodgingInfo);
+        auth.setIdentityBundle(identityBundle());
+        auth.setPreferredCustomer(true);
         batch.addTransaction(auth);
 
         Sale sale = new Sale();
@@ -550,7 +562,11 @@ public class TestBatchFile {
         sale.setAmount(6000L);
         sale.setOrderSource(OrderSourceType.ECOMMERCE);
         sale.setCard(card);
+        sale.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.SEVEN);
+        sale.setConversionAffiliateId("ABCD");
         sale.setId("id");
+        sale.setIdentityBundle(identityBundle());
+        sale.setPreferredCustomer(true);
         batch.addTransaction(sale);
 
         Credit credit = new Credit();
@@ -560,6 +576,7 @@ public class TestBatchFile {
         credit.setOrderSource(OrderSourceType.ECOMMERCE);
         credit.setCard(card);
         credit.setId("id");
+        credit .setIdentityBundle(identityBundle());
         batch.addTransaction(credit);
 
         AuthReversal authReversal = new AuthReversal();
@@ -568,6 +585,7 @@ public class TestBatchFile {
         authReversal.setAmount(106L);
         authReversal.setPayPalNotes("Notes");
         authReversal.setId("id");
+        authReversal.setIdentityBundle(identityBundle());
         batch.addTransaction(authReversal);
 
         RegisterTokenRequestType registerTokenRequestType = new RegisterTokenRequestType();
@@ -602,6 +620,7 @@ public class TestBatchFile {
         capture.setCnpTxnId(123456000L);
         capture.setAmount(106L);
         capture.setId("id");
+        capture.setIdentityBundle(identityBundle());
         batch.addTransaction(capture);
 
         CaptureGivenAuth captureGivenAuth = new CaptureGivenAuth();
@@ -615,6 +634,8 @@ public class TestBatchFile {
         captureGivenAuth.setAuthInformation(authInformation);
         captureGivenAuth.setOrderSource(OrderSourceType.ECOMMERCE);
         captureGivenAuth.setCard(card);
+        captureGivenAuth.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.TWO);
+        captureGivenAuth.setConversionAffiliateId("ABCD");
         captureGivenAuth.setId("id");
         batch.addTransaction(captureGivenAuth);
 
@@ -764,6 +785,7 @@ public class TestBatchFile {
         line_Item.setItemSequenceNumber(1);
         line_Item.setItemDescription("Electronics");
         line_Item.setProductCode("El01");
+        line_Item.setLineItemDetailIndicator(LineItemDetailIndicatorEnum.ZERO);
         line_Item.setItemCategory("Ele Appiances");
         line_Item.setItemSubCategory("home appliaces");
         line_Item.setProductId("1001");
@@ -780,6 +802,7 @@ public class TestBatchFile {
         enhancedData.getLineItemDatas().add(line_Item);
         enhancedData.setDiscountCode("oneTimeDis");
         enhancedData.setDiscountPercent(BigInteger.valueOf(12));
+        enhancedData.setNumberOfPayments(NumberOfPaymentsEnum.FIVE);
         enhancedData.setFulfilmentMethodType(FulfilmentMethodTypeEnum.COUNTER_PICKUP);
         authorization_mit.setEnhancedData(enhancedData);
         authorization_mit.setOrderChannel(OrderChannelEnum.MIT);
@@ -1117,7 +1140,9 @@ public class TestBatchFile {
         sub.setNextDeliveryDate(Calendar.getInstance());
         lid.setShipmentId("456");
         lid.setSubscription(sub);
+        lid.setLineItemDetailIndicator(LineItemDetailIndicatorEnum.ZERO);
         enhanced.getLineItemDatas().add(lid);
+        enhanced.setNumberOfPayments(NumberOfPaymentsEnum.FOUR);
         enhanced.setDiscountCode("oneTimeDis");
         enhanced.setDiscountPercent(BigInteger.valueOf(12));
         enhanced.setFulfilmentMethodType(FulfilmentMethodTypeEnum.STANDARD_SHIPPING);
@@ -1125,12 +1150,12 @@ public class TestBatchFile {
         authorization.setOrderChannel(OrderChannelEnum.SMART_TV);
         authorization.setBusinessIndicator(BusinessIndicatorEnum.RAPID_MERCHANT_SETTLEMENT);
         AccountFundingTransactionData accountFundingTransactionData= new AccountFundingTransactionData();
-        accountFundingTransactionData.setReceiverAccountNumber("12345");
         accountFundingTransactionData.setReceiverCountry(CountryTypeEnum.AD);
         accountFundingTransactionData.setReceiverFirstName("abc");
         accountFundingTransactionData.setReceiverState(StateTypeEnum.AK);
         accountFundingTransactionData.setReceiverLastName("def");
         accountFundingTransactionData.setReceiverAccountNumberType(AccountFundingTransactionAccountNumberTypeEnum.BAN_AND_BIC);
+        accountFundingTransactionData.setReceiverAccountNumberCnpToken("123456547890456987");
         accountFundingTransactionData.setAccountFundingTransactionType(AccountFundingTransactionTypeEnum.ACCOUNT_TO_ACCOUNT);
         authorization.setAccountFundingTransactionData(accountFundingTransactionData);
         authorization.setFraudCheckAction(FraudCheckActionEnum.DECLINED_NEED_FRAUD_CHECK);
@@ -1164,6 +1189,82 @@ public class TestBatchFile {
         assertEquals(transactionCount, txns);
         assertEquals(transactionCount, processor.responseCount);
     }
+
+    @Test
+    public void testBatchTxnv12_44(){
+        Assume.assumeFalse(preliveStatus.equalsIgnoreCase("down"));
+        String requestFileName = "cnpSdk-testBatchFile-eComDataOnly-changes-" + TIME_STAMP + ".xml";
+        CnpBatchFileRequest request = new CnpBatchFileRequest(requestFileName);
+        Properties configFromFile = request.getConfig();
+
+        // pre-assert the config file has required param values
+        assertEquals("payments.vantivprelive.com", configFromFile.getProperty("batchHost"));
+
+        CnpBatchRequest batch = request.createBatch(configFromFile.getProperty("merchantId"));
+
+        // card
+        CardType card = new CardType();
+        card.setNumber("4100000000000000");
+        card.setExpDate("1250");
+        card.setType(MethodOfPaymentTypeEnum.VI);
+
+        //eCommerceDataOnly as new ordersource, New element originalRetrievalReferenceNumber
+        Authorization authrReq = new Authorization();
+        authrReq.setReportGroup("Planets");
+        authrReq.setOrderId("12344");
+        authrReq.setAmount(106L);
+        authrReq.setOrderSource(OrderSourceType.ECOMMERCE_DATA_ONLY);
+        authrReq.setId("id");
+        authrReq.setCard(card);
+        authrReq.setOriginalRetrievalReferenceNumber("12345");
+        batch.addTransaction(authrReq);
+
+        Sale saleReq = new Sale();
+        saleReq.setReportGroup("Planets");
+        saleReq.setOrderId("12344");
+        saleReq.setAmount(6000L);
+        saleReq.setOrderSource(OrderSourceType.ECOMMERCE_DATA_ONLY);
+        saleReq.setCard(card);
+        saleReq.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.TWO);
+        saleReq.setConversionAffiliateId("ABCD");
+        saleReq.setId("id");
+        batch.addTransaction(saleReq);
+
+        //Changes to test v12.48 -pazeEncryptedPayload in auth and sale txn request
+        Authorization authorization = new Authorization();
+        authorization.setReportGroup("Planets");
+        authorization.setOrderId("12344");
+        authorization.setAmount(106L);
+        authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+        authorization.setId("id");
+        authorization.setPazeEncryptedPayload("NTEwMDAwMDAwMDAwMDAw");
+        batch.addTransaction(authorization);
+
+        Sale sale = new Sale();
+        sale.setReportGroup("Planets");
+        sale.setOrderId("12344");
+        sale.setAmount(106L);
+        sale.setOrderSource(OrderSourceType.ECOMMERCE);
+        sale.setId("id");
+        sale.setPazeEncryptedPayload("NTEwMDAwMDAwMDAwMDAwMA==");
+        batch.addTransaction(sale);
+
+        int transactionCount = batch.getNumberOfTransactions();
+
+        CnpBatchFileResponse fileResponse = request.sendToCnpSFTP();
+        CnpBatchResponse batchResponse = fileResponse
+                .getNextCnpBatchResponse();
+        int txns = 0;
+
+        ResponseValidatorProcessor processor = new ResponseValidatorProcessor();
+
+        while (batchResponse.processNextTransaction(processor)) {
+            txns++;
+        }
+        assertEquals(transactionCount, txns);
+        assertEquals(transactionCount, processor.responseCount);
+    }
+
     private SellerInfo addSellerInfo(){
         SellerInfo sellerInfo=new SellerInfo();
         sellerInfo.setAccountNumber("4485581000000005");
@@ -1185,7 +1286,6 @@ public class TestBatchFile {
 
         return  sellerInfo;
     }
-
     private SellerAddress addSellerAddress(){
         SellerAddress sellerAddress=new SellerAddress();
         sellerAddress.setSellerStreetaddress("15 Main Street");
@@ -1196,8 +1296,6 @@ public class TestBatchFile {
         sellerAddress.setSellerCountrycode("US");
         return  sellerAddress;
     }
-
-
     private SellerTagsType addSellerTags(){
         SellerTagsType sellerTagsType=new SellerTagsType();
         sellerTagsType.getTags().add("1");
@@ -1208,7 +1306,6 @@ public class TestBatchFile {
 
         return  sellerTagsType;
     }
-
 
     @Test
     public void testEcheckPreNoteAll() {
@@ -1867,6 +1964,7 @@ public class TestBatchFile {
         transactionReversal.setCnpTxnId(1234L);
         transactionReversal.setAmount(4321L);
         transactionReversal.setReportGroup("Default Report Group");
+        transactionReversal.setIdentityBundle(identityBundle());
         batch.addTransaction(transactionReversal);
 
         CnpBatchFileResponse fileResponse = request.sendToCnpSFTP();
@@ -1904,6 +2002,7 @@ public class TestBatchFile {
         transactionReversal.setCnpTxnId(1234L);
         transactionReversal.setAmount(4321L);
         transactionReversal.setReportGroup("Default Report Group");
+        transactionReversal.setIdentityBundle(identityBundle());
         batch.addTransaction(transactionReversal);
 
         CnpBatchFileResponse fileResponse = request.sendToCnpSFTP();
@@ -1923,6 +2022,19 @@ public class TestBatchFile {
 
         assertTrue(responseReceived[0]);
         assertEquals(1, numTxn);
+    }
+
+    private IdentityBundle identityBundle() {
+        IdentityBundle identityBundle = new IdentityBundle();
+        identityBundle.setMerchantId("12222");
+        identityBundle.setEntityId("222222");
+        identityBundle.setEntityReference("32222");
+        identityBundle.setResourceId("422222");
+        identityBundle.setResourceReference("52222");
+        identityBundle.setCommandId("6222");
+        identityBundle.setCommandReference("72222");
+        identityBundle.setOrderReference("82222");
+        return identityBundle;
     }
 
     @Test

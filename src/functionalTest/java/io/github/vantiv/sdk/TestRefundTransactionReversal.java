@@ -7,6 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import io.github.vantiv.sdk.generate.CustomBilling;
 import io.github.vantiv.sdk.generate.EnhancedData;
+import io.github.vantiv.sdk.generate.IdentityBundle;
 import io.github.vantiv.sdk.generate.LodgingInfo;
 import io.github.vantiv.sdk.generate.ProcessingInstructions;
 import io.github.vantiv.sdk.generate.RefundTransactionReversal;
@@ -96,8 +97,8 @@ public class TestRefundTransactionReversal {
         passengerTransportData.setCreditReasonIndicator(CreditReasonIndicatorEnum.C);
         passengerTransportData.setTicketChangeIndicator(TicketChangeIndicatorEnum.C);
         passengerTransportData.setTicketIssuerAddress("IssuerAddress");
-        passengerTransportData.setExchangeAmount(new Long(110));
-        passengerTransportData.setExchangeFeeAmount(new Long(112));
+        passengerTransportData.setExchangeAmount(Long.valueOf(110));
+        passengerTransportData.setExchangeFeeAmount(Long.valueOf(112));
         passengerTransportData.setExchangeTicketNumber("ExchangeNumber");
         passengerTransportData.getTripLegDatas().add(addTripLegData());
         return  passengerTransportData;
@@ -119,5 +120,29 @@ public class TestRefundTransactionReversal {
         tripLegData.setArrivalTime("10:00");
         tripLegData.setRemarks("Remarks");
         return  tripLegData;
+    }
+
+    //v12.41 changes to test identityBundle
+    @Test
+    public  void simpleRefundTransactionReversalWithIdentityBundle() throws Exception{
+        RefundTransactionReversal refundTransactionReversal = new RefundTransactionReversal();
+        refundTransactionReversal.setId("id");
+        refundTransactionReversal.setCnpTxnId(124785L);
+        IdentityBundle identityBundle = new IdentityBundle();
+        identityBundle.setMerchantId("12222");
+        identityBundle.setEntityId("222222");
+        identityBundle.setEntityReference("32222");
+        identityBundle.setResourceId("422222");
+        identityBundle.setResourceReference("52222");
+        identityBundle.setCommandId("6222");
+        identityBundle.setCommandReference("72222");
+        identityBundle.setOrderReference("82222");
+        refundTransactionReversal.setIdentityBundle(identityBundle);
+        RefundTransactionReversalResponse response = cnp.refundTransactionReversal(refundTransactionReversal);
+        assertEquals("Approved", response.getMessage());
+        assertEquals("sandbox", response.getLocation());
+        assertEquals("000", response.getResponse());
+        assertEquals("id", response.getId());
+        assertEquals(124785L, response.getRecyclingResponse().getCreditCnpTxnId().longValue());
     }
 }

@@ -3,6 +3,7 @@ package io.github.vantiv.sdk;
 import static org.junit.Assert.assertEquals;
 
 import io.github.vantiv.sdk.generate.*;
+import io.github.vantiv.sdk.generate.TypeOfDigitalCurrencyEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -133,7 +134,7 @@ public class TestSale {
         sale.setId("id");
         SaleResponse response = cnp.sale(sale);
         assertEquals("Insufficient Funds", response.getMessage());
-        assertEquals(new Long(110),response.getApplepayResponse().getTransactionAmount());
+        assertEquals(Long.valueOf(110),response.getApplepayResponse().getTransactionAmount());
 		assertEquals("sandbox", response.getLocation());
     }
 	
@@ -375,6 +376,7 @@ public class TestSale {
 		card.setExpDate("1215");
 		card.setType(MethodOfPaymentTypeEnum.VI);
 		sale.setCard(card);
+		sale.setForeignRetailerIndicator(ForeignRetailerIndicatorEnum.B);
 		SaleResponse response = cnp.sale(sale);
 		assertEquals(response.getMessage(), "Approved", response.getMessage());
 		assertEquals("sandbox", response.getLocation());
@@ -572,8 +574,8 @@ public class TestSale {
 		passengerTransportData.setCreditReasonIndicator(CreditReasonIndicatorEnum.C);
 		passengerTransportData.setTicketChangeIndicator(TicketChangeIndicatorEnum.C);
 		passengerTransportData.setTicketIssuerAddress("IssuerAddress");
-		passengerTransportData.setExchangeAmount(new Long(110));
-		passengerTransportData.setExchangeFeeAmount(new Long(112));
+		passengerTransportData.setExchangeAmount(Long.valueOf(110));
+		passengerTransportData.setExchangeFeeAmount(Long.valueOf(112));
 		passengerTransportData.setExchangeTicketNumber("ExchangeNumber");
 		passengerTransportData.getTripLegDatas().add(addTripLegData());
 		return  passengerTransportData;
@@ -833,7 +835,7 @@ public class TestSale {
 		assertEquals(response.getMessage(), "Approved", response.getMessage());
 		assertEquals("sandbox", response.getLocation());
 	}
-
+//test for new elements:typeOfDigitalCurrency,conversionAffiliateId  v12.40
 	@Test
 	public void sTestSimpleSalewith12_37() throws Exception{
 		Sale sale = new Sale();
@@ -847,6 +849,8 @@ public class TestSale {
 		card.setNumber("4100000000000000");
 		card.setExpDate("1210");
 		sale.setCard(card);
+		sale.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.TWO);
+		sale.setConversionAffiliateId("ABCD");
 		sale.setId("id");
 		AccountFundingTransactionData accountFundingTransactionData= new AccountFundingTransactionData();
 		accountFundingTransactionData.setReceiverAccountNumber("12345");
@@ -861,4 +865,61 @@ public class TestSale {
 		assertEquals("sandbox", response.getLocation());
 	}
 
+	//v12.41 changes to test identityBundle, v12.44 'ecommerceDataOnly' value in order source enum
+	@Test
+	public void saleWithIdentityBundle() throws Exception {
+		Sale sale = new Sale();
+		sale.setReportGroup("Planets");
+		sale.setOrderId("12344");
+		sale.setAmount(999999999999L);
+		sale.setOrderSource(OrderSourceType.ECOMMERCE_DATA_ONLY);
+		sale.setId("id");
+		FraudCheckType fraudCheckType = new FraudCheckType();
+		fraudCheckType.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.THREE);
+		fraudCheckType.setCustomerIpAddress("127.0.0.1");
+		sale.setCardholderAuthentication(fraudCheckType);
+		CardType card = new CardType();
+		card.setType(MethodOfPaymentTypeEnum.VI);
+		card.setNumber("4100000000000000");
+		card.setExpDate("1210");
+		sale.setCard(card);
+		IdentityBundle identityBundle = new IdentityBundle();
+		identityBundle.setMerchantId("12222");
+		identityBundle.setEntityId("222222");
+		identityBundle.setEntityReference("32222");
+		identityBundle.setResourceId("422222");
+		identityBundle.setResourceReference("52222");
+		identityBundle.setCommandId("6222");
+		identityBundle.setCommandReference("72222");
+		identityBundle.setOrderReference("82222");
+		sale.setIdentityBundle(identityBundle);
+		SaleResponse response = cnp.sale(sale);
+		assertEquals(response.getMessage(), "000", response.getResponse());
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+
+	@Test
+	public void saleWithPreferredCustomer() throws Exception {
+		Sale sale = new Sale();
+		sale.setReportGroup("Planets");
+		sale.setOrderId("12344");
+		sale.setAmount(999999999999L);
+		sale.setOrderSource(OrderSourceType.ECOMMERCE_DATA_ONLY);
+		sale.setId("id");
+		FraudCheckType fraudCheckType = new FraudCheckType();
+		fraudCheckType.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.THREE);
+		fraudCheckType.setCustomerIpAddress("127.0.0.1");
+		sale.setCardholderAuthentication(fraudCheckType);
+		CardType card = new CardType();
+		card.setType(MethodOfPaymentTypeEnum.VI);
+		card.setNumber("4100000000000000");
+		card.setExpDate("1210");
+		sale.setCard(card);
+		sale.setPreferredCustomer(false);
+		SaleResponse response = cnp.sale(sale);
+		assertEquals(response.getMessage(), "000", response.getResponse());
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
 }

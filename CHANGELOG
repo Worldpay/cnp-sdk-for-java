@@ -1,5 +1,82 @@
 = Vantiv eCommerce CNP CHANGELOG
 
+### Change Log for 12.49.0_jdk21 (April 17,2026)
+- Change: Added ANT commands to enable support for Integer values in enumeration definitions
+- Change: Updated Java version compatibility to Java 21. Source & Target compatibility is set to version 17.
+
+==Change Log for 12.49 (January 23,2026)
+Change: [cnpAPI v12.49]: New simple element 'preferredCustomer' of type 'boolean' is added in  'authorization' and 'sale' request.
+Change: [cnpAPI v12.49]: New simple element 'preferredCustomerDecision' of type 'boolean' is added in Authorization and sale response.
+Change: [cnpAPI v12.49]: New complex element 'tlid' is added in sale response.
+Change: [cnpAPI v12.49]: In existing enum 'tlidValidationActionIndicatorType'  new value "3" is added.
+Change: [cnpAPI v12.49]: for existing request "reserveCredit" base type is changed from 'transactionTypeWithReportGroupAndRtp' to 'transactionTypeWithReportGroup'
+
+==Change Log for 12.48 (October 29,2025)
+* Change: [cnpAPI v12.48] New element pazeEncryptedPayload added to both Auth and Sale transaction requests.
+* Change: [cnpAPI v12.48] New complex element TLID added in authResponse and authReversalResponse.
+* Change: [cnpAPI v12.48] New sub elements to support TLID - lifecycleTlid (type: tlidType),economicTlid (type: tlidType),tlidCustomerProvided (type: tlidType) and tlidValidationActionIndicator (type: tlidValidationActionIndicatorType)
+* Change: [cnpAPI v12.48] New element tlidValidationActionIndicatorType added with Enum values 1, 2.
+* Change: [cnpAPI v12.48] New type tlidType added as string for TLID fields.
+
+==Change Log for 12.47 (July 28,2025)
+* Change: [cnpAPI v12.47] New header 'X-Ecom-Api' is added in the request on the basis 2 cofiguration newly added properties in the property file 'sendEcomHeader' and 'ecomHeaderValue'.
+* Change: [cnpAPI v12.47] New enum 'numberOfPaymentsEnum' added with values '1','2','3','4','5','6','7','8','9','+' .
+* Change: [cnpAPI v12.47] New enum 'lineItemDetailIndicatorEnum' added with values '0','1','2','3','4','5'.
+* Change: [cnpAPI v12.47] In existing complex element lineItemData new enum 'lineItemDetailIndicator' of type 'lineItemDetailIndicatorEnum' is added.
+* Change: [cnpAPI v12.47] In existing complex element 'numberOfPayments' new enum 'numberOfPayments' of type 'numberOfPaymentsEnum' is added.
+* Change: [cnpAPI v12.46] In 'AuthorizationResponse' and 'SaleResponse' simple elements 'credentialType' of type 'string' and 'cardDetails' of type 'ccAccountNumberType' are added.
+* Change: [cnpAPI v12.46] In existing complex element 'accountFundingTransactionData' two simple elements 'receiverAccountNumber' of type 'string50Type' and 'receiverAccountNumberCnpToken' of type 'ccAccountNumberType' are added as choice.
+
+==Change Log for 12.45 (May 22,2025)
+* Change: [cnpAPI v12.45] In existing enum 'foreignRetailerIndicatorEnum' new values 'A','B'.
+* Change: [cnpAPI v12.45] In existing authorization request new element 'foreignRetailerIndicator' of type 'foreignRetailerIndicatorEnum' is added in orderId sequence.
+* Change: [cnpAPI v12.45] In existing element 'typeOfDigitalCurrency' is modified to support only these value '1','2','3','4','7'.
+
+==Change Log for 12.44.1 (March 06,2025)
+* Change: Upgraded commons-io 2.11.0 to commons-io 2.18.0 to fix BD vulnerability.
+
+==Change Log for 12.44 (March 04,2025)
+* Change: [cnpAPI v12.44] In ordersourcetype enum, 'ecommerceDataOnly' value is added.
+
+==Change Log for 12.43 [Only for Worldpay Internal Usage]
+* Change: [cnpAPI v12.43] Two new elements cumulativeAmount,originalTransactionAmount added in realtimeIncrementalAuthorization.
+* Change: [cnpAPI v12.43] In enum networkFieldNameEnumType,'Additional Request Data' value is added.
+
+==Change Log for 12.42 [Only for Worldpay Internal Usage]
+* Change: [cnpAPI v12.42] For all child elements of identityBundle minOccurs changed to 0 from 1.
+* Change: [cnpAPI v12.42] New Transaction type realtimeIncrementalAuthorization added.
+* Change: [cnpAPI v12.42] New element originalRetrievalReferenceNumber added in authorization request.
+
+==Change Log for 12.41
+* Change: [cnpAPI v12.41] In authorization,authReversal,capture,sale,credit,depositTransactionReversal,refundTransactionReversal new complex type element added - identityBundle.
+* Change: [cnpAPI v12.41] New complex type element identityBundle with child elements-merchantId,entityId,entityReference,resourceId,resourceReference,commandId,commandReference,orderReference with minOccurs as 1.
+* Change: [cnpAPI v12.41] New elements are added in authorizationResponse,saleResponse -retrievalReferenceNumber of type string12Type ,orderSource of type orderSourceType.
+* Change: [cnpAPI v12.41] New datatype- string12Type - of string type of length 12 to support retrievalReferenceNumber element .
+* Change: [cnpAPI v12.41] For existing element cardSuffixType maxLength is increased to 23
+
+==Change Log for 12.40(September 30th,2024)
+* Change: [cnpAPI v12.40] In authorization,sale and captureGivenAuth request new elements added-> 'typeOfDigitalCurrency' and 'conversionAffiliateId'.
+* Change: [cnpAPI v12.40] In existing simple type transactionAmountType range added between minInclusive value -999999999999  and maxInclusive value 999999999999
+* Change: [cnpAPI v12.40] In existing type authenticationProtocolVersionType new values '3','4','5','6','7','8' and '9' are added
+
+==Change Log for 12.39
+* Change: [cnpAPI v12.39] In 'subMerchantCredit' 'payFacCredit','reserveCredit', 'payoutOrgCreditRequest' base changed from 'transactionTypeWithReportGroup' to 'transactionTypeWithReportGroupAndRtp'.
+* Change: [cnpAPI v12.39] To support new changed extension base for above txns ,New Complextype 'transactionTypeWithReportGroupAndRtp' added.
+* Change: [cnpAPI v12.39] New element 'fundingTransactionReferenceNumber' in authorization and sale response.
+
+==Change Log for 12.38
+* Change: [cnpAPI v12.38] In existing Enum 'ActionTypeEnum' new value 'FIVD' added
+* Change: [cnpAPI v12.38] In existing complex element 'baseRequest' two more choices are added 'encryptionKeyRequest' and 'encryptedPayload'
+* Change: [cnpAPI v12.38] In existing complex element 'cnpOnlineResponse' one more choice is added 'encryptionKeyResponse'
+* Change: [cnpAPI v12.38] New element 'encryptionKeyRequest' is added of type 'encryptionKeyRequestEnum'
+* Change: [cnpAPI v12.38] To support 'encryptionKeyRequest' new Enum 'encryptionKeyRequestEnum' added with values 'CURRENT' and 'PREVIOUS'
+* Change: [cnpAPI v12.38] New complex element 'encryptionKeyResponse' is added with simple elements ->'encryptionKeySequence' of type 'encryptionKeySequenceType' and 'encryptionKey' of type 'encryptionKeyType'
+* Change: [cnpAPI v12.38] To support 'encryptionKeySequence' new simple type 'encryptionKeySequenceType' added with total Digits 19
+* Change: [cnpAPI v12.38] To support 'encryptionKey' new simple type 'encryptionKeyType' of type string with maxLength 15000
+* Change: [cnpAPI v12.38] New complex element 'encryptedPayload' is added with simple elements ->'encryptionKeySequence' of type 'encryptionKeySequenceType' and 'payload' of type 'payloadType'
+* Change: [cnpAPI v12.38] To support 'payload' new simple type 'payloadType' of type string with maxLength 15000
+* Change: [cnpAPI v12.38] In capture Request new complex element 'partialCapture' is added with elements-> 'partialCaptureSequenceNumber' of type 'integer' and 'partialCaptureTotalCount' of type 'partialCaptureCount'
+
 ==Version 12.37.1 (v12.37.1)(Jun 25, 2024)
 * Change: [cnpAPI v12.37.1] Change: cnp-sdk-for-java is upgraded to work with Java 8 compatibility.
 

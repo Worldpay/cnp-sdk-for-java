@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import io.github.vantiv.sdk.generate.*;
+import io.github.vantiv.sdk.generate.TypeOfDigitalCurrencyEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -231,7 +232,7 @@ public class TestAuth {
         authorization.setApplepay(applepayType);
 
         AuthorizationResponse response = cnp.authorize(authorization);
-        assertEquals(new Long(110),response.getApplepayResponse().getTransactionAmount());
+        assertEquals(Long.valueOf(110),response.getApplepayResponse().getTransactionAmount());
 		assertEquals("sandbox", response.getLocation());
     }
 
@@ -346,6 +347,7 @@ public class TestAuth {
 	    DetailTax dt2 = new DetailTax();
 	    dt2.setTaxAmount(200L);
 	    enhanced.getDetailTaxes().add(dt2);
+        enhanced.setNumberOfPayments(NumberOfPaymentsEnum.TWO);
 	    authorization.setEnhancedData(enhanced);
 	    CardType card = new CardType();
 	    card.setNumber("4100000000000000");
@@ -409,7 +411,7 @@ public class TestAuth {
 		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
 		authorization.setId("id");
 		FraudCheckType fraudCheckType = new FraudCheckType();
-		fraudCheckType.setAuthenticationProtocolVersion(new BigInteger("1"));
+		fraudCheckType.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.ONE);
 		fraudCheckType.setCustomerIpAddress("127.0.0.1");
 		authorization.setCardholderAuthentication(fraudCheckType);
 		CardType card = new CardType();
@@ -424,7 +426,10 @@ public class TestAuth {
 		assertEquals("sandbox", response.getLocation());
 	}
 
-	@Test (expected = CnpOnlineException.class)
+	//unable to test the AuthProtocol using a value of ZERO because the enumeration AuthenticationProtocolVersionType does not define an entry for ZERO.
+	//Previously, this parameter was handled as a string, but following the recent ANT updates, it is now strictly typed as an enumeration. Consequently, validation is performed using AuthenticationProtocolVersionType.ONE.
+
+	@Test // (expected = CnpOnlineException.class)
 	public void simpleAuthProtocolZero() throws Exception {
 		Authorization authorization = new Authorization();
 		authorization.setReportGroup("Planets");
@@ -433,7 +438,7 @@ public class TestAuth {
 		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
 		authorization.setId("id");
 		FraudCheckType fraudCheckType = new FraudCheckType();
-		fraudCheckType.setAuthenticationProtocolVersion(new BigInteger("0"));
+		fraudCheckType.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.ONE);
 		authorization.setCardholderAuthentication(fraudCheckType);
 		CardType card = new CardType();
 		card.setType(MethodOfPaymentTypeEnum.VI);
@@ -516,10 +521,12 @@ public class TestAuth {
 		EnhancedData enhanced = new EnhancedData();
 		enhanced.setCustomerReference("Cust Ref");
 		enhanced.setSalesTax(1000L);
+		enhanced.setNumberOfPayments(NumberOfPaymentsEnum.ONE);
 		LineItemData lid = new LineItemData();
 		lid.setItemSequenceNumber(1);
 		lid.setItemDescription("Electronics");
 		lid.setProductCode("El01");
+		lid.setLineItemDetailIndicator(LineItemDetailIndicatorEnum.ZERO);
 		lid.setItemCategory("Ele Appiances");
 		lid.setItemSubCategory("home appliaces");
 		lid.setProductId("1001");
@@ -698,8 +705,8 @@ public class TestAuth {
 		passengerTransportData.setCreditReasonIndicator(CreditReasonIndicatorEnum.C);
 		passengerTransportData.setTicketChangeIndicator(TicketChangeIndicatorEnum.C);
 		passengerTransportData.setTicketIssuerAddress("IssuerAddress");
-		passengerTransportData.setExchangeAmount(new Long(110));
-		passengerTransportData.setExchangeFeeAmount(new Long(112));
+		passengerTransportData.setExchangeAmount(Long.valueOf(110));
+		passengerTransportData.setExchangeFeeAmount(Long.valueOf(112));
 		passengerTransportData.setExchangeTicketNumber("ExchangeNumber");
 		passengerTransportData.getTripLegDatas().add(addTripLegData());
 		return  passengerTransportData;
@@ -1089,12 +1096,12 @@ public class TestAuth {
 		authorization.setOrderChannel(OrderChannelEnum.SMART_TV);
 		authorization.setBusinessIndicator(BusinessIndicatorEnum.RAPID_MERCHANT_SETTLEMENT);
 		AccountFundingTransactionData accountFundingTransactionData= new AccountFundingTransactionData();
-		accountFundingTransactionData.setReceiverAccountNumber("12345");
 		accountFundingTransactionData.setReceiverCountry(CountryTypeEnum.AD);
 		accountFundingTransactionData.setReceiverFirstName("abc");
 		accountFundingTransactionData.setReceiverState(StateTypeEnum.AK);
 		accountFundingTransactionData.setReceiverLastName("def");
 		accountFundingTransactionData.setReceiverAccountNumberType(AccountFundingTransactionAccountNumberTypeEnum.BAN_AND_BIC);
+		accountFundingTransactionData.setReceiverAccountNumberCnpToken("123456789101122435");
 		accountFundingTransactionData.setAccountFundingTransactionType(AccountFundingTransactionTypeEnum.ACCOUNT_TO_ACCOUNT);
 		authorization.setAccountFundingTransactionData(accountFundingTransactionData);
 		authorization.setFraudCheckAction(FraudCheckActionEnum.DECLINED_NEED_FRAUD_CHECK);
@@ -1103,5 +1110,142 @@ public class TestAuth {
 		assertEquals("Approved", response.getMessage());
 		assertEquals("sandbox", response.getLocation());
 	}
+	//test for new elements:typeOfDigitalCurrency,conversionAffiliateId , amount- range min/max
+	// and authenticationProtocolVersionType for enum value added 3,4,5,6,7,8,9.
+	@Test
+	public void simpleAuthProtocol() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(999999999999L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+		authorization.setId("id");
+		FraudCheckType fraudCheckType = new FraudCheckType();
+		fraudCheckType.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.THREE);
+		fraudCheckType.setCustomerIpAddress("127.0.0.1");
+		authorization.setCardholderAuthentication(fraudCheckType);
+		CardType card = new CardType();
+		card.setType(MethodOfPaymentTypeEnum.VI);
+		card.setNumber("4100000000000000");
+		card.setExpDate("1210");
+		authorization.setCard(card);
+		authorization.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.ONE);
+		authorization.setConversionAffiliateId("ABCD");
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "000",response.getResponse());
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
 
+	//v12.41 changes to test identityBundle ,v12.43 originalRetrievalReferenceNumber, v12.44 'ecommerceDataOnly' value in order source enum
+	@Test
+	public void authWithIdentityBundle() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(999999999999L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE_DATA_ONLY);
+		authorization.setId("id");
+		FraudCheckType fraudCheckType = new FraudCheckType();
+		fraudCheckType.setAuthenticationProtocolVersion(AuthenticationProtocolVersionType.THREE);
+		fraudCheckType.setCustomerIpAddress("127.0.0.1");
+		authorization.setCardholderAuthentication(fraudCheckType);
+		CardType card = new CardType();
+		card.setType(MethodOfPaymentTypeEnum.VI);
+		card.setNumber("4100000000000000");
+		card.setExpDate("1210");
+		authorization.setCard(card);
+		IdentityBundle identityBundle = new IdentityBundle();
+		identityBundle.setMerchantId("12222");
+		identityBundle.setEntityId("222222");
+		identityBundle.setEntityReference("32222");
+		identityBundle.setResourceId("422222");
+		identityBundle.setResourceReference("52222");
+		identityBundle.setCommandId("6222");
+		identityBundle.setCommandReference("72222");
+		identityBundle.setOrderReference("82222");
+		authorization.setIdentityBundle(identityBundle);
+		authorization.setOriginalRetrievalReferenceNumber("1234567");
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "000", response.getResponse());
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+
+	//v12.48 changes to test pazeEncryptedPayload
+	@Test
+	public void authPazePayload_VI_Approve() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(106L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+		authorization.setId("id");
+		authorization.setPazeEncryptedPayload("NDEwMDAwMDAwMDAwMDAwMA==");
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "000",response.getResponse());
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+
+	@Test
+	public void authPazePayload_VI_Decline() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(106L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+		authorization.setId("id");
+		authorization.setPazeEncryptedPayload("NDEwMDAwMDAwMDAwMDAwMQ==");
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "350",response.getResponse());
+		assertEquals("Generic Decline", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+
+	@Test
+	public void authPazePayload_MC_Approve() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(106L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+		authorization.setId("id");
+		authorization.setPazeEncryptedPayload("NTEwMDAwMDAwMDAwMDAwMA==");
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "000",response.getResponse());
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+
+	@Test
+	public void authPazePayload_MC_Decline() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(106L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+		authorization.setId("id");
+		authorization.setPazeEncryptedPayload("NTEwMDAwMDAwMDAwMDAwMQ==");
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "350",response.getResponse());
+		assertEquals("Generic Decline", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+
+	@Test
+	public void authPreferredCustomer() throws Exception {
+		Authorization authorization = new Authorization();
+		authorization.setReportGroup("Planets");
+		authorization.setOrderId("12344");
+		authorization.setAmount(106L);
+		authorization.setOrderSource(OrderSourceType.ECOMMERCE);
+		authorization.setId("id");
+		authorization.setPazeEncryptedPayload("NTEwMDAwMDAwMDAwMDAwMQ==");
+		authorization.setPreferredCustomer(true);
+		AuthorizationResponse response = cnp.authorize(authorization);
+		assertEquals(response.getMessage(), "350",response.getResponse());
+		assertEquals("Generic Decline", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
 }

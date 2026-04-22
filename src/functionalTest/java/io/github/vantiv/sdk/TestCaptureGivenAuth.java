@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.Calendar;
 
 import io.github.vantiv.sdk.generate.*;
+import io.github.vantiv.sdk.generate.TypeOfDigitalCurrencyEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -428,8 +429,8 @@ public class TestCaptureGivenAuth {
 		passengerTransportData.setCreditReasonIndicator(CreditReasonIndicatorEnum.C);
 		passengerTransportData.setTicketChangeIndicator(TicketChangeIndicatorEnum.C);
 		passengerTransportData.setTicketIssuerAddress("IssuerAddress");
-		passengerTransportData.setExchangeAmount(new Long(110));
-		passengerTransportData.setExchangeFeeAmount(new Long(112));
+		passengerTransportData.setExchangeAmount(Long.valueOf(110));
+		passengerTransportData.setExchangeFeeAmount(Long.valueOf(112));
 		passengerTransportData.setExchangeTicketNumber("ExchangeNumber");
 		passengerTransportData.getTripLegDatas().add(addTripLegData());
 		return  passengerTransportData;
@@ -569,6 +570,32 @@ public class TestCaptureGivenAuth {
 		accountFundingTransactionData.setReceiverLastName("def");
 		capturegivenauth.setAccountFundingTransactionData(accountFundingTransactionData);
 		capturegivenauth.setForeignRetailerIndicator(ForeignRetailerIndicatorEnum.F);
+		CaptureGivenAuthResponse response = cnp.captureGivenAuth(capturegivenauth);
+		assertEquals("Approved", response.getMessage());
+		assertEquals("sandbox", response.getLocation());
+	}
+	//test for new elements:typeOfDigitalCurrency,conversionAffiliateId
+	@Test
+	public void simpleCaptureGivenAuth_12_40() throws Exception{
+		CaptureGivenAuth capturegivenauth = new CaptureGivenAuth();
+		capturegivenauth.setAmount(106L);
+		capturegivenauth.setOrderId("12344");
+		AuthInformation authInfo = new AuthInformation();
+		Calendar authDate = Calendar.getInstance();
+		authDate.set(2002, Calendar.OCTOBER, 9);
+		authInfo.setAuthDate(authDate);
+		authInfo.setAuthCode("543216");
+		authInfo.setAuthAmount(12345L);
+		capturegivenauth.setAuthInformation(authInfo);
+		capturegivenauth.setOrderSource(OrderSourceType.ECOMMERCE);
+		CardType card = new CardType();
+		card.setType(MethodOfPaymentTypeEnum.VI);
+		card.setNumber("4100000000000000");
+		card.setExpDate("1210");
+		capturegivenauth.setCard(card);
+		capturegivenauth.setTypeOfDigitalCurrency(TypeOfDigitalCurrencyEnum.SEVEN);
+		capturegivenauth.setConversionAffiliateId("ABCD");
+		capturegivenauth.setId("id");
 		CaptureGivenAuthResponse response = cnp.captureGivenAuth(capturegivenauth);
 		assertEquals("Approved", response.getMessage());
 		assertEquals("sandbox", response.getLocation());
