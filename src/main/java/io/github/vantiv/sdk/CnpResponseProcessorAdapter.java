@@ -168,4 +168,7 @@ public class CnpResponseProcessorAdapter implements CnpResponseProcessor {
 
     public void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse) {
     }
+
+    public void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse) {
+    }
 }

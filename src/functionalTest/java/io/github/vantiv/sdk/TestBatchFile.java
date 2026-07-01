@@ -1610,6 +1610,11 @@ public class TestBatchFile {
                     public void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse) {
 
                     }
+
+                    @Override
+                    public void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse) {
+
+                    }
                 })) {
 
             txns++;
@@ -1939,6 +1944,11 @@ public class TestBatchFile {
 
                     @Override
                     public void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse) {
+
+                    }
+
+                    @Override
+                    public void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse) {
 
                     }
                 })) {
@@ -2340,6 +2350,11 @@ public class TestBatchFile {
                     public void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse) {
 
                     }
+
+                    @Override
+                    public void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse) {
+
+                    }
                 })) {
             txns++;
         }
@@ -2692,6 +2707,11 @@ public class TestBatchFile {
 
         @Override
         public void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse) {
+
+        }
+
+        @Override
+        public void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse) {
 
         }
     }

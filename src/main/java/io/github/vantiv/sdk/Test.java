@@ -197,6 +197,9 @@ public class Test {
 
                 public void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse) {
                 }
+
+                public void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse) {
+                }
             })){
                 System.out.println("Processed another txn!");
             }

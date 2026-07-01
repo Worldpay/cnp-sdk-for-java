@@ -104,4 +104,6 @@ public interface CnpResponseProcessor {
     void processDepositTransactionReversalResponse(DepositTransactionReversalResponse depositTransactionReversalResponse);
 
     void processRefundTransactionReversalResponse(RefundTransactionReversalResponse refundTransactionReversalResponse);
+
+    void processQueryDpoWalletBalanceResponse(QueryDpoWalletBalanceResponse queryDpoWalletBalanceResponse);
 }
