@@ -395,10 +395,6 @@ public class CnpBatchRequest {
             transaction = objFac.createPayoutOrgDebit((PayoutOrgDebit) transactionType);
             transactionAdded = true;
             numOfTxn++;
-        } else if(transactionType instanceof QueryDpoWalletBalance) {
-            transaction = objFac.createQueryDpoWalletBalance((QueryDpoWalletBalance) transactionType);
-            transactionAdded = true;
-            numOfTxn++;
         } else {
             transaction = objFac.createTransaction(new TransactionType());
         }
